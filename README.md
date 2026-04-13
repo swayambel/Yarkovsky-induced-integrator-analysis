@@ -2,72 +2,99 @@
 
 ## Overview
 
-This project investigates how small non-gravitational perturbations, specifically the Yarkovsky effect, influence orbital evolution over long timescales and how different numerical integrators handle such perturbations.
+This project investigates how weak non-gravitational perturbations, specifically the Yarkovsky effect, interact with numerical integration errors in orbital simulations.
 
-While classical two-body simulations assume purely gravitational dynamics, real asteroid motion is affected by subtle forces that can cause measurable drift. This project explores how accurately different numerical methods capture this behavior.
+The central challenge is not just modeling the perturbation, but determining whether it can be **distinguished from numerical drift** introduced by the integration scheme itself.
 
 ---
 
 ## Objectives
 
-- Model orbital motion with both gravitational and non-gravitational forces  
-- Implement a simplified Yarkovsky acceleration model  
-- Compare numerical integrators in long-term simulations  
-- Analyze how numerical errors interact with physical perturbations  
+- Model orbital motion with gravitational + Yarkovsky forces  
+- Quantify energy drift due to both numerical error and physical perturbation  
+- Compare integrators in terms of accuracy, stability, and signal resolution  
+- Determine conditions under which weak forces are reliably detectable  
 
 ---
 
-## Key Concepts
+## Key Contributions
 
-- Two-body orbital dynamics  
-- Yarkovsky effect (simplified tangential acceleration model)  
-- Numerical integration methods:
-  - Euler Method  
-  - Runge-Kutta 4 (RK4)  
-  - Velocity Verlet (Symplectic)  
+- **Decomposition of energy drift** into:
+  - Numerical error (pure gravity baseline)
+  - Physical Yarkovsky-induced drift  
+
+- **Signal-to-noise (SNR) analysis** to quantify detectability of weak perturbations  
+
+- Identification of a **resolution-limited regime**, where physical signal ≈ numerical error  
+
+- Demonstration of a **trade-off**:
+  - RK4 → high accuracy, high SNR (short–medium term)
+  - Velocity Verlet → bounded error, long-term structural stability  
 
 ---
 
 ## Methodology
 
-1. Simulate an asteroid in an elliptical orbit under solar gravity  
-2. Introduce a small tangential acceleration to model the Yarkovsky effect  
-3. Run simulations using different numerical integrators  
-4. Track and compare:
-   - Orbital trajectory  
-   - Semi-major axis drift  
+1. Simulate a 2D two-body system with normalized units  
+2. Add a tangential acceleration to model the Yarkovsky effect  
+3. Run simulations using:
+   - Euler (baseline failure case)
+   - RK4 (high-order, non-symplectic)
+   - Velocity Verlet (symplectic)
+
+4. Analyze:
+   - Orbital trajectories  
    - Energy evolution  
-   - Angular momentum conservation  
+   - Numerical vs physical drift  
+   - Timestep convergence  
 
 ---
 
-## Expected Outcomes
+## Key Results
 
-- Symplectic integrators preserve orbital structure better over long timescales  
-- Non-symplectic methods introduce artificial drift  
-- Numerical error can amplify or mask real physical perturbations  
+- Euler is unstable and unsuitable for orbital simulations  
+- RK4 achieves **very high signal-to-noise ratio**, clearly resolving Yarkovsky drift over short–medium timescales  
+- Velocity Verlet maintains **bounded energy error**, but operates near the noise floor at chosen timestep  
+- Detectability of weak forces depends critically on:
+  - timestep  
+  - integrator choice  
+  - simulation duration  
+
+---
+
+## Core Insight
+
+> Resolving weak physical perturbations requires that numerical error remains **below the physical signal**, not merely small.
+
+This establishes a fundamental trade-off between:
+- **Accuracy (RK4)** → detecting weak forces  
+- **Symplectic stability (Verlet)** → long-term fidelity  
 
 ---
 
 ## Project Structure
-simulation.ipynb # Main simulation and analysis
-README.md # Project documentation
+
+- `yarkovsky_stability_analysis.ipynb` — full simulation, analysis, and figures  
+- `README.md` — project summary  
 
 ---
 
 ## Why This Project Matters
 
-This project connects numerical methods with real-world orbital dynamics by showing that:
+In real-world orbital dynamics (asteroid tracking, planetary defense, mission design), small forces accumulate over long timescales.
 
-> The choice of integrator is not just a computational detail — it directly affects the physical interpretation of long-term simulations.
+This study shows that:
+- numerical error can mimic or mask real physics  
+- integrator choice directly affects scientific conclusions  
 
 ---
 
-## Future Scope
+## Future Work
 
-- Incorporating spin-dependent Yarkovsky models  
-- Extending to YORP-driven evolution  
-- Parameter sensitivity analysis  
+- Higher-order symplectic integrators (Yoshida schemes)  
+- Coupled spin dynamics (YORP effect)  
+- 3D orbital extensions  
+- Adaptive timestep comparisons (RK45)  
 
 ---
 
